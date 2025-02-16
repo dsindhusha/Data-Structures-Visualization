@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Input Module</title>
+    <link href="https://cdn.jsdelivr.net/npm/@mui/material@5.11.0/dist/material.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@mui/material@5.11.0/dist/material.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js" defer></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #fff8e1;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Navbar styles from the Home Page */
+        .navbar {
+            background-color: #FFA500;
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+        }
+        .navbar h1 {
+            color: white;
+            margin: 0;
+            font-size: 22px;
+        }
+        .navbar nav {
+            display: flex;
+            gap: 20px;
+        }
+        .navbar a {
+            text-decoration: none;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px 20px;
+            background-color: #FFA500;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        .navbar a:hover {
+            background-color: #FFD580;
+            color: white;
+        }
+
+        /* Container for the Data Input content */
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(255, 165, 0, 0.3);
+            width: 60%;
+            max-width: 700px;
+            text-align: center;
+            margin: 20px auto;
+        }
+        .tab-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            gap: 10px;
+        }
+        .tab-buttons button {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            background: #ffb74d;
+            color: white;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+            font-weight: 600;
+        }
+        .tab-buttons button.active {
+            background: #e69138;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border-radius: 8px;
+            background: #fff3e0;
+            box-shadow: 0 4px 10px rgba(255, 165, 0, 0.2);
+        }
+        .tab-content.active {
+            display: block;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            border: 1px solid #ffcc80;
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #ff9800;
+            color: white;
+        }
+        input[type='file'], input[type='text'] {
+            display: block;
+            margin: 15px auto;
+            padding: 10px;
+            width: 90%;
+            border: 1px solid #ffcc80;
+            border-radius: 6px;
+            text-align: center;
+        }
+        .error {
+            border: 1px solid red !important;
+            background-color: #ffe6e6;
+        }
+        button.action-btn {
+            background: #ff5722;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button.action-btn:hover {
+            background: #d84315;
+        }
+        .file-preview {
+            background: #ffcc80;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+        }
+        .file-preview.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar with all the navigation options -->
+    <div class="navbar">
+        <h1>DSA Visuo</h1>
+        <nav>
+            <a href="dataInput.html">Data Input</a>
+            <a href="search.html">Searching</a>
+            <a href="sorting.html">Sorting</a>
+            <a href="stack.html">Stacks</a>
+            <a href="queue.html">Queues</a>
+            <a href="linkedList.html">Linked List</a>
+            <a href="tree.html">Trees</a>
+            <a href="graph.html">Graphs</a>
+        </nav>
+    </div>
+
+    <div class="container">
+        <div class="tab-buttons">
+            <button class="tab-link active" onclick="openTab(event, 'fileUpload')">File Upload</button>
+            <button class="tab-link" onclick="openTab(event, 'manualInput')">Manual Input</button>
+            <button class="tab-link" onclick="openTab(event, 'randomData')">Random Data</button>
+        </div>
+        
+        <!-- File Upload Tab -->
+        <div id="fileUpload" class="tab-content active">
+            <input type="file" id="fileInput" accept=".csv,.json" onchange="handleFileUpload(event)">
+            <div class="file-preview" id="filePreview"></div>
+        </div>
+        
+        <!-- Manual Input Tab -->
+        <div id="manualInput" class="tab-content">
+            <button onclick="addRow()">Add Row</button>
+            <table id="manualTable">
+                <thead>
+                    <tr><th>Value</th><th>Action</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        
+        <!-- Random Data Tab -->
+        <div id="randomData" class="tab-content">
+            <button onclick="generateRandomData()">Generate Data</button>
+            <table id="randomTable">
+                <thead>
+                    <tr><th>Random Value</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        // Switch between tabs
+        function openTab(evt, tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-link').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            evt.currentTarget.classList.add('active');
+        }
+        
+        // Handle file upload (CSV or JSON)
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const filePreview = document.getElementById('filePreview');
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const fileContent = e.target.result;
+                if (file.type === 'application/json') {
+                    try {
+                        const json = JSON.parse(fileContent);
+                        filePreview.innerHTML = `<pre>${JSON.stringify(json, null, 2)}</pre>`;
+                    } catch (error) {
+                        filePreview.innerHTML = 'Invalid JSON file.';
+                    }
+                } else if (file.type === 'text/csv') {
+                    const rows = fileContent.split('\n');
+                    let tableContent = '<table><tr><th>CSV Content</th></tr>';
+                    rows.forEach(row => {
+                        tableContent += `<tr><td>${row}</td></tr>`;
+                    });
+                    tableContent += '</table>';
+                    filePreview.innerHTML = tableContent;
+                }
+                filePreview.classList.add('active');
+            };
+            reader.readAsText(file);
+        }
+
+        // Add a new row for manual input
+        function addRow() {
+            const tbody = document.querySelector('#manualTable tbody');
+            const row = document.createElement('tr');
+            row.innerHTML = `<td><input type='text' onblur='validateInput(this)'></td><td><button class='action-btn' onclick='removeRow(this)'>Remove</button></td>`;
+            tbody.appendChild(row);
+        }
+        
+        // Remove a row
+        function removeRow(button) {
+            button.closest('tr').remove();
+        }
+        
+        // Validate the input
+        function validateInput(input) {
+            if (!input.value.trim()) {
+                input.classList.add('error');
+                alert('Value cannot be empty');
+            } else if (isNaN(input.value)) {
+                input.classList.add('error');
+                alert('Only numeric values are allowed');
+            } else {
+                input.classList.remove('error');
+            }
+        }
+        
+        // Generate random numeric data
+        function generateRandomData() {
+            const tbody = document.querySelector('#randomTable tbody');
+            tbody.innerHTML = '';
+            for (let i = 0; i < 5; i++) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${Math.floor(Math.random() * 100)}</td>`;
+                tbody.appendChild(row);
+            }
+        }
+    </script>
+</body>
+</html>

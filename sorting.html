@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorting Algorithms Visualization</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #fff8e1;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+        }
+        .navbar {
+            background-color: #FFA500;
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+        }
+        .navbar h1 {
+            color: white;
+            margin: 0;
+            font-size: 22px;
+        }
+        .navbar nav {
+            display: flex;
+            gap: 20px;
+        }
+        .navbar a {
+            text-decoration: none;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px 20px;
+            background-color: #FFA500;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        .navbar a:hover {
+            background-color: #FFD580;
+            color: white;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(255, 165, 0, 0.3);
+            width: 80%;
+            max-width: 800px;
+            margin: auto;
+        }
+        button {
+            background: #ff9800;
+            color: white;
+            border: none;
+            padding: 12px;
+            margin: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        button:hover {
+            background: #e68900;
+        }
+        .array-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+        .box {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ffb74d;
+            color: white;
+            font-weight: bold;
+            border-radius: 6px;
+            transition: background 0.3s ease;
+        }
+        .box.sorted {
+            background: #4caf50;
+        }
+        .box.comparing {
+            background: #f44336;
+        }
+        .box.target {
+            background: #3f51b5;
+        }
+        .log {
+            margin-top: 20px;
+            text-align: left;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar with all the navigation options -->
+    <div class="navbar">
+        <h1>DSA Visuo</h1>
+        <nav>
+            <a href="dataInput.html">Data Input</a>
+            <a href="search.html">Searching</a>
+            <a href="sorting.html">Sorting</a>
+            <a href="stack.html">Stacks</a>
+            <a href="queue.html">Queues</a>
+            <a href="linkedList.html">Linked List</a>
+            <a href="tree.html">Trees</a>
+            <a href="graph.html">Graphs</a>
+        </nav>
+    </div>
+
+    <div class="container">
+        <h2>Sorting Algorithms Visualization</h2>
+        <button onclick="generateArray()">Generate New Array</button>
+        <button onclick="bubbleSort()">Bubble Sort</button>
+        <button onclick="selectionSort()">Selection Sort</button>
+        <button onclick="insertionSort()">Insertion Sort</button>
+        <button onclick="quickSortHandler()">Quick Sort</button>
+        <button onclick="mergeSortHandler()">Merge Sort</button>
+        <div class="array-container" id="arrayContainer"></div>
+        <div class="log" id="logContainer"></div>
+    </div>
+
+    <script>
+        let numbers = [34, 12, 45, 22, 18];
+
+        // Generate a new random array
+        function generateArray() {
+            let arrayContainer = document.getElementById('arrayContainer');
+            let logContainer = document.getElementById('logContainer');
+            arrayContainer.innerHTML = ''; // Clear the existing array
+            logContainer.innerHTML = ''; // Clear the log
+            numbers = Array.from({ length: 5 }, () => Math.floor(Math.random() * 50) + 1); // Generate new random numbers
+            numbers.forEach(num => {
+                let div = document.createElement('div');
+                div.classList.add('box');
+                div.textContent = num;
+                arrayContainer.appendChild(div);
+            });
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Update the log with a message
+        async function updateLog(message) {
+            let logContainer = document.getElementById('logContainer');
+            logContainer.innerHTML += `<p>${message}</p>`;
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        // Swap two elements and log the action
+        async function swap(el1, el2) {
+            await sleep(500);
+            let tempText = el1.textContent;
+            el1.textContent = el2.textContent;
+            el2.textContent = tempText;
+            await updateLog(`Swapped ${el1.textContent} and ${el2.textContent}`);
+        }
+
+        // Bubble Sort Algorithm
+        async function bubbleSort() {
+            let boxes = document.querySelectorAll('.box');
+            for (let i = 0; i < boxes.length - 1; i++) {
+                for (let j = 0; j < boxes.length - i - 1; j++) {
+                    boxes[j].classList.add('comparing');
+                    boxes[j + 1].classList.add('comparing');
+                    await updateLog(`Comparing ${boxes[j].textContent} and ${boxes[j + 1].textContent}`);
+                    if (parseInt(boxes[j].textContent) > parseInt(boxes[j + 1].textContent)) {
+                        await swap(boxes[j], boxes[j + 1]);
+                    }
+                    boxes[j].classList.remove('comparing');
+                    boxes[j + 1].classList.remove('comparing');
+                }
+                boxes[boxes.length - 1 - i].classList.add('sorted');
+            }
+            boxes[0].classList.add('sorted');
+        }
+
+        // Selection Sort Algorithm
+        async function selectionSort() {
+            let boxes = document.querySelectorAll('.box');
+            for (let i = 0; i < boxes.length; i++) {
+                let minIndex = i;
+                for (let j = i + 1; j < boxes.length; j++) {
+                    boxes[j].classList.add('comparing');
+                    await sleep(500);
+                    await updateLog(`Comparing ${boxes[j].textContent} and ${boxes[minIndex].textContent}`);
+                    if (parseInt(boxes[j].textContent) < parseInt(boxes[minIndex].textContent)) {
+                        minIndex = j;
+                    }
+                    boxes[j].classList.remove('comparing');
+                }
+                if (minIndex !== i) {
+                    await swap(boxes[i], boxes[minIndex]);
+                }
+                boxes[i].classList.add('sorted');
+            }
+        }
+
+        // Insertion Sort Algorithm
+        async function insertionSort() {
+            let boxes = document.querySelectorAll('.box');
+            for (let i = 1; i < boxes.length; i++) {
+                let j = i;
+                while (j > 0 && parseInt(boxes[j - 1].textContent) > parseInt(boxes[j].textContent)) {
+                    boxes[j].classList.add('comparing');
+                    boxes[j - 1].classList.add('comparing');
+                    await updateLog(`Comparing ${boxes[j - 1].textContent} and ${boxes[j].textContent}`);
+                    await swap(boxes[j], boxes[j - 1]);
+                    boxes[j].classList.remove('comparing');
+                    boxes[j - 1].classList.remove('comparing');
+                    j--;
+                }
+            }
+        }
+
+        // Quick Sort Handler
+        async function quickSortHandler() {
+            let boxes = document.querySelectorAll('.box');
+            await quickSort(boxes, 0, boxes.length - 1);
+            boxes.forEach(box => box.classList.add('sorted'));
+        }
+
+        // Quick Sort Algorithm
+        async function quickSort(boxes, left, right) {
+            if (left >= right) return;
+            let pivot = parseInt(boxes[right].textContent);
+            let partitionIndex = left;
+            for (let i = left; i < right; i++) {
+                boxes[i].classList.add('comparing');
+                boxes[right].classList.add('comparing');
+                await updateLog(`Comparing ${boxes[i].textContent} and ${boxes[right].textContent}`);
+                if (parseInt(boxes[i].textContent) < pivot) {
+                    await swap(boxes[i], boxes[partitionIndex]);
+                    partitionIndex++;
+                }
+                boxes[i].classList.remove('comparing');
+                boxes[right].classList.remove('comparing');
+            }
+            await swap(boxes[partitionIndex], boxes[right]);
+            await quickSort(boxes, left, partitionIndex - 1);
+            await quickSort(boxes, partitionIndex + 1, right);
+        }
+
+        // Merge Sort Handler
+        async function mergeSortHandler() {
+            let boxes = document.querySelectorAll('.box');
+            await mergeSort(boxes, 0, boxes.length - 1);
+            boxes.forEach(box => box.classList.add('sorted'));
+        }
+
+        // Merge Sort Algorithm
+        async function mergeSort(boxes, left, right) {
+            if (left >= right) return;
+            let mid = Math.floor((left + right) / 2);
+            await mergeSort(boxes, left, mid);
+            await mergeSort(boxes, mid + 1, right);
+            await merge(boxes, left, mid, right);
+        }
+
+        // Merge function for Merge Sort
+        async function merge(boxes, left, mid, right) {
+            let temp = [];
+            let i = left, j = mid + 1;
+            while (i <= mid && j <= right) {
+                boxes[i].classList.add('comparing');
+                boxes[j].classList.add('comparing');
+                await updateLog(`Comparing ${boxes[i].textContent} and ${boxes[j].textContent}`);
+                if (parseInt(boxes[i].textContent) <= parseInt(boxes[j].textContent)) {
+                    temp.push(boxes[i].textContent);
+                    i++;
+                } else {
+                    temp.push(boxes[j].textContent);
+                    j++;
+                }
+                boxes[i - 1]?.classList.remove('comparing');
+                boxes[j - 1]?.classList.remove('comparing');
+            }
+            while (i <= mid) {
+                temp.push(boxes[i].textContent);
+                i++;
+            }
+            while (j <= right) {
+                temp.push(boxes[j].textContent);
+                j++;
+            }
+            for (let k = 0; k < temp.length; k++) {
+                boxes[left + k].textContent = temp[k];
+                await sleep(500);
+            }
+        }
+
+        // Initialize the array on page load
+        generateArray();
+    </script>
+</body>
+</html>

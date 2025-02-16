@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BST Visualization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #FFF8E7;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background-color: #FFA500;
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+        }
+        .navbar h1 {
+            color: white;
+            margin: 0;
+            font-size: 22px;
+        }
+        .navbar nav {
+            display: flex;
+            gap: 20px;
+        }
+        .navbar a {
+            text-decoration: none;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px 20px;
+            background-color: #FFA500;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        .navbar a:hover {
+            background-color: #FFD580;
+            color: white;
+        }
+
+        .controls-container {
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .controls-container button {
+            background-color: #FFA500;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        .controls-container button:hover {
+            background-color: #FF8C00;
+        }
+
+        .tree-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .node {
+            display: inline-block;
+            padding: 15px;
+            border-radius: 50%;
+            background-color: #FFA500;
+            color: white;
+            font-weight: bold;
+            position: relative;
+            margin: 10px;
+            box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <h1>DSA Visuo</h1>
+        <nav>
+            <a href="dataInput.html">Data Input</a>
+            <a href="search.html">Searching</a>
+            <a href="sorting.html">Sorting</a>
+            <a href="stack.html">Stacks</a>
+            <a href="queue.html">Queues</a>
+            <a href="linkedList.html">Linked List</a>
+            <a href="tree.html">Trees</a>
+            <a href="graph.html">Graphs</a>
+        </nav>
+    </div>
+
+    <div class="controls-container">
+        <button onclick="insertNode(prompt('Enter value to insert:'))">Insert Node</button>
+        <button onclick="inorderTraversal()">Inorder Traversal</button>
+        <button onclick="preorderTraversal()">Preorder Traversal</button>
+        <button onclick="postorderTraversal()">Postorder Traversal</button>
+    </div>
+
+    <div class="tree-container" id="tree"></div>
+
+    <script>
+        class TreeNode {
+            constructor(value) {
+                this.value = value;
+                this.left = null;
+                this.right = null;
+            }
+        }
+
+        class BST {
+            constructor() {
+                this.root = null;
+            }
+
+            insert(value) {
+                this.root = this._insertRec(this.root, value);
+            }
+
+            _insertRec(node, value) {
+                if (node === null) {
+                    return new TreeNode(value);
+                }
+                if (value < node.value) {
+                    node.left = this._insertRec(node.left, value);
+                } else if (value > node.value) {
+                    node.right = this._insertRec(node.right, value);
+                }
+                return node;
+            }
+
+            inorder(node, result) {
+                if (node) {
+                    this.inorder(node.left, result);
+                    result.push(node.value);
+                    this.inorder(node.right, result);
+                }
+            }
+
+            preorder(node, result) {
+                if (node) {
+                    result.push(node.value);
+                    this.preorder(node.left, result);
+                    this.preorder(node.right, result);
+                }
+            }
+
+            postorder(node, result) {
+                if (node) {
+                    this.postorder(node.left, result);
+                    this.postorder(node.right, result);
+                    result.push(node.value);
+                }
+            }
+        }
+
+        let tree = new BST();
+
+        function insertNode(value) {
+            value = parseInt(value);
+            if (!isNaN(value)) {
+                tree.insert(value);
+                renderTree();
+            } else {
+                alert('Please enter a valid number');
+            }
+        }
+
+        function renderTree() {
+            const container = document.getElementById('tree');
+            container.innerHTML = '';
+            drawTree(tree.root, container);
+        }
+
+        function drawTree(node, container) {
+            if (!node) return;
+
+            let div = document.createElement('div');
+            div.className = 'node';
+            div.innerText = node.value;
+            container.appendChild(div);
+
+            let subContainer = document.createElement('div');
+            subContainer.style.display = 'flex';
+            subContainer.style.justifyContent = 'center';
+            container.appendChild(subContainer);
+
+            if (node.left) {
+                let leftContainer = document.createElement('div');
+                leftContainer.style.flex = 1;
+                subContainer.appendChild(leftContainer);
+                drawTree(node.left, leftContainer);
+            }
+
+            if (node.right) {
+                let rightContainer = document.createElement('div');
+                rightContainer.style.flex = 1;
+                subContainer.appendChild(rightContainer);
+                drawTree(node.right, rightContainer);
+            }
+        }
+
+        function inorderTraversal() {
+            let result = [];
+            tree.inorder(tree.root, result);
+            alert('Inorder Traversal: ' + result.join(', '));
+        }
+
+        function preorderTraversal() {
+            let result = [];
+            tree.preorder(tree.root, result);
+            alert('Preorder Traversal: ' + result.join(', '));
+        }
+
+        function postorderTraversal() {
+            let result = [];
+            tree.postorder(tree.root, result);
+            alert('Postorder Traversal: ' + result.join(', '));
+        }
+    </script>
+
+</body>
+</html>

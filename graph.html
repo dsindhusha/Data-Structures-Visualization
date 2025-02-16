@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph Algorithms Visualization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #FFF8E7;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background-color: #FFA500;
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+        }
+        .navbar h1 {
+            color: white;
+            margin: 0;
+            font-size: 22px;
+        }
+        .navbar nav {
+            display: flex;
+            gap: 20px;
+        }
+        .navbar a {
+            text-decoration: none;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px 20px;
+            background-color: #FFA500;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        .navbar a:hover {
+            background-color: #FFD580;
+            color: white;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(255, 165, 0, 0.3);
+            width: 80%;
+            max-width: 800px;
+            margin: auto;
+        }
+        button {
+            background: #ff9800;
+            color: white;
+            border: none;
+            padding: 12px;
+            margin: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        button:hover {
+            background: #e68900;
+        }
+        .graph-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+        .node {
+            width: 40px;
+            height: 40px;
+            background: #ffb74d;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            position: absolute;
+            z-index: 2;
+        }
+        .highlight {
+            background: #f44336;
+        }
+        .edge {
+            position: absolute;
+            height: 2px;
+            background: #ccc;
+            z-index: 1;
+        }
+        .path {
+            background: #4caf50;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar with all the navigation options -->
+    <div class="navbar">
+        <h1>DSA Visuo</h1>
+        <nav>
+            <a href="dataInput.html">Data Input</a>
+            <a href="search.html">Searching</a>
+            <a href="sorting.html">Sorting</a>
+            <a href="stack.html">Stacks</a>
+            <a href="queue.html">Queues</a>
+            <a href="linkedList.html">Linked List</a>
+            <a href="tree.html">Trees</a>
+            <a href="graph.html">Graphs</a>
+        </nav>
+    </div>
+
+    <!-- Main content area -->
+    <div class="container">
+        <h2>Graph Algorithms Visualization</h2>
+        <p>Click below to start exploring different graph algorithms.</p>
+        <button onclick="runBFS()">BFS</button>
+        <button onclick="runDFS()">DFS</button>
+        <button onclick="runDijkstra()">Dijkstra</button>
+        <button onclick="resetGraph()">Reset</button>
+
+        <div class="graph-container" id="graphContainer"></div>
+    </div>
+
+    <script>
+        let graph = {
+            'A': {'B': 1, 'C': 4},
+            'B': {'A': 1, 'D': 2, 'E': 5},
+            'C': {'A': 4, 'E': 1},
+            'D': {'B': 2, 'E': 3},
+            'E': {'B': 5, 'C': 1, 'D': 3}
+        };
+
+        let positions = {
+            'A': [150, 50], 'B': [50, 150], 'C': [250, 150],
+            'D': [50, 250], 'E': [250, 250]
+        };
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function drawEdges() {
+            let container = document.getElementById('graphContainer');
+            Object.keys(graph).forEach(node => {
+                Object.keys(graph[node]).forEach(neighbor => {
+                    let x1 = positions[node][0] + 20;
+                    let y1 = positions[node][1] + 20;
+                    let x2 = positions[neighbor][0] + 20;
+                    let y2 = positions[neighbor][1] + 20;
+                    let edge = document.createElement('div');
+                    edge.classList.add('edge');
+                    edge.style.width = `${Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)}px`;
+                    edge.style.left = `${x1}px`;
+                    edge.style.top = `${y1}px`;
+                    edge.style.transform = `rotate(${Math.atan2(y2 - y1, x2 - x1)}rad)`;
+                    container.appendChild(edge);
+                });
+            });
+        }
+
+        async function highlightPath(from, to) {
+            let edges = document.querySelectorAll('.edge');
+            for (let edge of edges) {
+                let x1 = positions[from][0] + 20;
+                let y1 = positions[from][1] + 20;
+                let x2 = positions[to][0] + 20;
+                let y2 = positions[to][1] + 20;
+                if (
+                    (edge.style.left === `${x1}px` && edge.style.top === `${y1}px` &&
+                     edge.style.width === `${Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)}px`) ||
+                    (edge.style.left === `${x2}px` && edge.style.top === `${y2}px` &&
+                     edge.style.width === `${Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)}px`)
+                ) {
+                    edge.classList.add('path');
+                    await sleep(500);
+                }
+            }
+        }
+
+        async function runBFS() {
+            let queue = ['A'];
+            let visited = new Set();
+            let parent = {};
+            while (queue.length) {
+                let node = queue.shift();
+                if (!visited.has(node)) {
+                    visited.add(node);
+                    document.getElementById(node).classList.add('highlight');
+                    await sleep(500);
+                }
+                Object.keys(graph[node]).forEach(neighbor => {
+                    if (!visited.has(neighbor)) {
+                        queue.push(neighbor);
+                        parent[neighbor] = node;
+                    }
+                });
+            }
+            let current = 'E';
+            while (current !== 'A') {
+                await highlightPath(parent[current], current);
+                current = parent[current];
+            }
+        }
+
+        async function runDFS(node = 'A', visited = new Set(), parent = {}) {
+            if (visited.has(node)) return;
+            visited.add(node);
+            document.getElementById(node).classList.add('highlight');
+            await sleep(500);
+            for (let neighbor of Object.keys(graph[node])) {
+                if (!visited.has(neighbor)) {
+                    parent[neighbor] = node;
+                    await runDFS(neighbor, visited, parent);
+                }
+            }
+            if (node === 'E') {
+                let current = 'E';
+                while (current !== 'A') {
+                    await highlightPath(parent[current], current);
+                    current = parent[current];
+                }
+            }
+        }
+
+        async function runDijkstra() {
+            let distances = {};
+            let visited = new Set();
+            let pq = [['A', 0]];
+            let parent = {};
+            Object.keys(graph).forEach(node => distances[node] = Infinity);
+            distances['A'] = 0;
+
+            while (pq.length) {
+                pq.sort((a, b) => a[1] - b[1]);
+                let [currentNode, currentDist] = pq.shift();
+                if (visited.has(currentNode)) continue;
+                visited.add(currentNode);
+                document.getElementById(currentNode).classList.add('highlight');
+                await sleep(500);
+
+                for (let neighbor in graph[currentNode]) {
+                    let newDist = currentDist + graph[currentNode][neighbor];
+                    if (newDist < distances[neighbor]) {
+                        distances[neighbor] = newDist;
+                        pq.push([neighbor, newDist]);
+                        parent[neighbor] = currentNode;
+                    }
+                }
+            }
+            let current = 'E';
+            while (current !== 'A') {
+                await highlightPath(parent[current], current);
+                current = parent[current];
+            }
+        }
+
+        function resetGraph() {
+            document.querySelectorAll('.node').forEach(node => node.classList.remove('highlight'));
+            document.querySelectorAll('.edge').forEach(edge => edge.classList.remove('path'));
+        }
+
+        function renderGraph() {
+            let container = document.getElementById('graphContainer');
+            container.innerHTML = '';
+            Object.keys(graph).forEach(node => {
+                let div = document.createElement('div');
+                div.classList.add('node');
+                div.id = node;
+                div.textContent = node;
+                div.style.left = positions[node][0] + 'px';
+                div.style.top = positions[node][1] + 'px';
+                container.appendChild(div);
+            });
+        }
+
+        renderGraph();
+    </script>
+</body>
+</html>

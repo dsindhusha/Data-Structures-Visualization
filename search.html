@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Searching Algorithms</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #FFF8E7;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Navbar styles from the Home Page */
+        .navbar {
+            background-color: #FFA500;
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+        }
+        .navbar h1 {
+            color: white;
+            margin: 0;
+            font-size: 22px;
+        }
+        .navbar nav {
+            display: flex;
+            gap: 20px;
+        }
+        .navbar a {
+            text-decoration: none;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px 20px;
+            background-color: #FFA500;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        .navbar a:hover {
+            background-color: #FFD580;
+            color: white;
+        }
+
+        /* Content area */
+        .container {
+            background: white;
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(255, 165, 0, 0.4);
+            width: 70%;
+            max-width: 600px;
+            margin: 50px auto;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border: 1px solid #ffa500;
+            border-radius: 8px;
+            font-size: 18px;
+        }
+
+        button {
+            background: #ff8c00;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #e07b00;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #ff4500;
+            font-size: 18px;
+        }
+
+        .array-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .array-element {
+            width: 60px;
+            height: 60px;
+            margin: 5px;
+            border-radius: 8px;
+            background-color: #ffa500;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            transition: background-color 0.5s, transform 0.5s;
+        }
+
+        .highlight {
+            background-color: #e07b00;
+            transform: scale(1.2);
+        }
+
+        .found {
+            background-color: #4caf50;
+        }
+
+        .checked {
+            background-color: #2196F3;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar with all the navigation options -->
+    <div class="navbar">
+        <h1>DSA Visuo</h1>
+        <nav>
+            <a href="dataInput.html">Data Input</a>
+            <a href="search.html">Searching</a>
+            <a href="sorting.html">Sorting</a>
+            <a href="stack.html">Stacks</a>
+            <a href="queue.html">Queues</a>
+            <a href="linkedList.html">Linked List</a>
+            <a href="tree.html">Trees</a>
+            <a href="graph.html">Graphs</a>
+        </nav>
+    </div>
+
+    <!-- Search Algorithm Content -->
+    <div class="container">
+        <h2>Searching Algorithms</h2>
+        <input type="text" id="arrayInput" placeholder="Enter numbers separated by commas">
+        <input type="number" id="searchKey" placeholder="Enter number to search">
+        <select id="algorithm">
+            <option value="linear">Linear Search</option>
+            <option value="binary">Binary Search</option>
+        </select>
+        <button onclick="performSearch()">Search</button>
+        <div class="result" id="result"></div>
+        <div class="array-container" id="arrayContainer"></div>
+    </div>
+
+    <script>
+        function performSearch() {
+            let array = document.getElementById("arrayInput").value.split(',').map(Number);
+            let key = Number(document.getElementById("searchKey").value);
+            let algorithm = document.getElementById("algorithm").value;
+            let result = -1;
+
+            // Clear previous visual results
+            resetArray();
+
+            // Display the array visualization
+            visualizeArray(array);
+
+            if (algorithm === "linear") {
+                result = linearSearch(array, key);
+            } else if (algorithm === "binary") {
+                array.sort((a, b) => a - b); // Binary search works on sorted arrays
+                result = binarySearch(array, key);
+            }
+
+            document.getElementById("result").innerText = result !== -1 ? `Element found at index: ${result}` : "Element not found";
+        }
+
+        // Function to display array elements in the container
+        function visualizeArray(array) {
+            const container = document.getElementById("arrayContainer");
+            container.innerHTML = ""; // Clear previous elements
+            array.forEach((item, index) => {
+                const element = document.createElement("div");
+                element.classList.add("array-element");
+                element.innerText = item;
+                container.appendChild(element);
+            });
+        }
+
+        // Reset all visual effects (highlight, checked, etc.)
+        function resetArray() {
+            const elements = document.querySelectorAll(".array-element");
+            elements.forEach((element) => {
+                element.classList.remove("highlight", "checked", "found");
+            });
+        }
+
+        // Highlight an array element
+        function highlightElement(index) {
+            const elements = document.querySelectorAll(".array-element");
+            elements[index].classList.add("highlight");
+        }
+
+        // Mark an element as checked
+        function changeElementState(index, state) {
+            const elements = document.querySelectorAll(".array-element");
+            elements[index].classList.add(state);
+        }
+
+        // Mark the found element with green
+        function markFound(index) {
+            const elements = document.querySelectorAll(".array-element");
+            elements[index].classList.add("found");
+        }
+
+        // Linear Search implementation
+        function linearSearch(arr, key) {
+            for (let i = 0; i < arr.length; i++) {
+                highlightElement(i);
+                changeElementState(i, "checked");
+                if (arr[i] === key) {
+                    markFound(i);
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        // Binary Search implementation
+        function binarySearch(arr, key) {
+            let left = 0, right = arr.length - 1;
+            while (left <= right) {
+                let mid = Math.floor((left + right) / 2);
+                highlightElement(mid);
+                changeElementState(mid, "checked");
+                if (arr[mid] === key) {
+                    markFound(mid);
+                    return mid;
+                } else if (arr[mid] < key) {
+                    left = mid + 1;
+                } else {
+                    right = mid - 1;
+                }
+                resetArray(); // Reset after each iteration
+            }
+            return -1;
+        }
+    </script>
+
+</body>
+</html>

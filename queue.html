@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Queue Operations</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #FFF8E7;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .navbar {
+            background-color: #FFA500;
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+        }
+        .navbar h1 {
+            color: white;
+            margin: 0;
+            font-size: 22px;
+        }
+        .navbar nav {
+            display: flex;
+            gap: 20px;
+        }
+        .navbar a {
+            text-decoration: none;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px 20px;
+            background-color: #FFA500;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        .navbar a:hover {
+            background-color: #FFD580;
+            color: white;
+        }
+
+        .container {
+            background-color: #fff;
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+            border: 2px solid #ff9800;
+        }
+
+        h1 {
+            color: #ff9800;
+            font-size: 28px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        input,
+        button {
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 2px solid #ff9800;
+            margin: 10px 0;
+            width: 100%;
+            box-sizing: border-box;
+            outline: none;
+            transition: 0.3s ease;
+        }
+
+        input:focus,
+        button:focus {
+            border-color: #ff6600;
+            box-shadow: 0 0 5px rgba(255, 102, 0, 0.4);
+        }
+
+        button {
+            cursor: pointer;
+            background-color: #ff9800;
+            color: white;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #e68900;
+        }
+
+        .queue-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-top: 20px;
+            min-height: 70px;
+            padding: 15px;
+            background-color: #fafafa;
+            border: 2px dashed #ff9800;
+            border-radius: 10px;
+        }
+
+        .box {
+            width: 60px;
+            height: 60px;
+            background-color: #ff9800;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: 0.3s ease;
+        }
+
+        .box:hover {
+            background-color: #e68900;
+        }
+
+        .alert {
+            color: red;
+            font-size: 16px;
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .button-container button {
+            width: 48%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <h1>DSA Visuo</h1>
+        <nav>
+            <a href="dataInput.html">Data Input</a>
+            <a href="search.html">Searching</a>
+            <a href="sorting.html">Sorting</a>
+            <a href="stack.html">Stacks</a>
+            <a href="queue.html">Queues</a>
+            <a href="linkedList.html">Linked List</a>
+            <a href="tree.html">Trees</a>
+            <a href="graph.html">Graphs</a>
+        </nav>
+    </div>
+
+    <div class="container">
+        <h1>Queue Operations</h1>
+        <input type="number" id="queueInput" placeholder="Enter number" />
+        
+        <div class="button-container">
+            <button onclick="enqueue()">Enqueue</button>
+            <button onclick="dequeue()">Dequeue</button>
+        </div>
+
+        <button onclick="front()">Front</button>
+        <h3>Queue:</h3>
+        <div class="queue-container" id="queueContainer">
+            <!-- Queue elements will appear here -->
+        </div>
+
+        <p id="alertMessage" class="alert"></p>
+    </div>
+
+    <script>
+        let queue = [];
+
+        function updateQueueUI() {
+            let queueContainer = document.getElementById("queueContainer");
+            queueContainer.innerHTML = "";
+            if (queue.length === 0) {
+                document.getElementById("alertMessage").innerText = "Queue is empty!";
+            } else {
+                document.getElementById("alertMessage").innerText = "";
+            }
+            queue.forEach(item => {
+                let box = document.createElement("div");
+                box.classList.add("box");
+                box.innerText = item;
+                queueContainer.appendChild(box);
+            });
+        }
+
+        function enqueue() {
+            let value = document.getElementById("queueInput").value;
+            if (value === "" || isNaN(value)) {
+                document.getElementById("alertMessage").innerText = "Please enter a valid number!";
+                return;
+            }
+            queue.push(parseInt(value));
+            updateQueueUI();
+            document.getElementById("queueInput").value = "";
+        }
+
+        function dequeue() {
+            if (queue.length === 0) {
+                document.getElementById("alertMessage").innerText = "Queue is empty!";
+                return;
+            }
+            queue.shift();
+            updateQueueUI();
+        }
+
+        function front() {
+            if (queue.length === 0) {
+                document.getElementById("alertMessage").innerText = "Queue is empty!";
+                return;
+            }
+            alert("Front element: " + queue[0]);
+        }
+    </script>
+</body>
+</html>

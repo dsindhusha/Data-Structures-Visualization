@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linked List Operations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #fff7e6;
+            padding: 30px;
+            margin: 0;
+        }
+
+        .navbar {
+            background-color: #FFA500;
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+        }
+        .navbar h1 {
+            color: white;
+            margin: 0;
+            font-size: 22px;
+        }
+        .navbar nav {
+            display: flex;
+            gap: 20px;
+        }
+        .navbar a {
+            text-decoration: none;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px 20px;
+            background-color: #FFA500;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        .navbar a:hover {
+            background-color: #FFD580;
+            color: white;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            max-width: 700px;
+            margin: auto;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            border: 3px solid #ff9800;
+            margin-top: 20px;
+        }
+
+        h1, h2 {
+            color: #ff9800;
+        }
+
+        hr {
+            margin: 20px 0;
+            border: 1px solid #ff9800;
+        }
+
+        input, button {
+            margin: 10px;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 2px solid #ff9800;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: #ff9800;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #e68900;
+        }
+
+        .operation-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ff9800;
+            border-radius: 8px;
+            background-color: #fff3e0;
+        }
+
+        .operation-section h3 {
+            margin: 0 0 10px;
+        }
+
+        .result-display {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #ff9800;
+        }
+
+        .linked-list {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #000;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <h1>DSA Visuo</h1>
+        <nav>
+            <a href="dataInput.html">Data Input</a>
+            <a href="search.html">Searching</a>
+            <a href="sorting.html">Sorting</a>
+            <a href="stack.html">Stacks</a>
+            <a href="queue.html">Queues</a>
+            <a href="linkedlist.html">Linked List</a>
+            <a href="tree.html">Trees</a>
+            <a href="graph.html">Graphs</a>
+        </nav>
+    </div>
+
+    <div class="container">
+        <h1>Linked List Operations</h1>
+
+        <label>Enter Numbers (comma-separated):</label>
+        <input type="text" id="arrayInput" placeholder="e.g. 10, 5, 8, 3">
+        <button onclick="initializeArray()">Generate Array</button>
+
+        <h3>Current Array: <span id="arrayDisplay">[]</span></h3>
+
+        <hr>
+
+        <h2>Linked List Operations</h2>
+
+        <div class="operation-section">
+            <button onclick="convertToLinkedList()">Convert to Linked List</button>
+            <p id="linkedListDisplay" class="linked-list"></p>
+        </div>
+
+        <div class="operation-section">
+            <h3>Insert at Head:</h3>
+            <input type="number" id="insertHeadValue" placeholder="Insert at head">
+            <button onclick="insertAtHead()">Insert</button>
+        </div>
+
+        <div class="operation-section">
+            <h3>Insert in Middle:</h3>
+            <input type="number" id="insertMiddleValue" placeholder="Insert in middle">
+            <button onclick="insertAtMiddle()">Insert</button>
+        </div>
+
+        <div class="operation-section">
+            <h3>Insert at Position:</h3>
+            <input type="number" id="insertPosValue" placeholder="Insert Value">
+            <input type="number" id="insertPosIndex" placeholder="Position">
+            <button onclick="insertAtPosition()">Insert</button>
+        </div>
+
+        <div class="operation-section">
+            <h3>Delete Node:</h3>
+            <input type="number" id="deleteValue" placeholder="Delete value">
+            <button onclick="deleteNode()">Delete</button>
+        </div>
+
+        <div class="operation-section">
+            <button onclick="traverseList()">Traverse List</button>
+            <p id="traversalResult" class="result-display"></p>
+        </div>
+
+    </div>
+
+    <script>
+        let arr = [];
+
+        function initializeArray() {
+            let input = document.getElementById("arrayInput").value;
+            arr = input.split(",").map(num => parseInt(num.trim())).filter(num => !isNaN(num));
+            document.getElementById("arrayDisplay").innerText = `[ ${arr.join(", ")} ]`;
+        }
+
+        class Node {
+            constructor(value) {
+                this.value = value;
+                this.next = null;
+            }
+        }
+
+        class LinkedList {
+            constructor() {
+                this.head = null;
+            }
+
+            insertAtHead(value) {
+                let newNode = new Node(value);
+                newNode.next = this.head;
+                this.head = newNode;
+            }
+
+            insertAtMiddle(value) {
+                if (!this.head || !this.head.next) {
+                    this.insertAtHead(value);
+                    return;
+                }
+                let slow = this.head, fast = this.head;
+                while (fast.next && fast.next.next) {
+                    slow = slow.next;
+                    fast = fast.next.next;
+                }
+                let newNode = new Node(value);
+                newNode.next = slow.next;
+                slow.next = newNode;
+            }
+
+            insertAtPosition(value, position) {
+                if (position <= 0) {
+                    this.insertAtHead(value);
+                    return;
+                }
+                let newNode = new Node(value);
+                let temp = this.head;
+                for (let i = 0; i < position - 1 && temp; i++) {
+                    temp = temp.next;
+                }
+                if (!temp) return;
+                newNode.next = temp.next;
+                temp.next = newNode;
+            }
+
+            delete(value) {
+                if (!this.head) return;
+                if (this.head.value === value) {
+                    this.head = this.head.next;
+                    return;
+                }
+                let temp = this.head;
+                while (temp.next && temp.next.value !== value) {
+                    temp = temp.next;
+                }
+                if (temp.next) {
+                    temp.next = temp.next.next;
+                }
+            }
+
+            traverse() {
+                let result = [];
+                let temp = this.head;
+                while (temp) {
+                    result.push(temp.value);
+                    temp = temp.next;
+                }
+                return result;
+            }
+        }
+
+        let linkedList = new LinkedList();
+
+        function updateLinkedListDisplay() {
+            let display = '';
+            let temp = linkedList.head;
+            while (temp) {
+                display += temp.value + (temp.next ? ' → ' : '');
+                temp = temp.next;
+            }
+            document.getElementById("linkedListDisplay").innerText = display || 'Linked list is empty';
+        }
+
+        function convertToLinkedList() {
+            linkedList = new LinkedList();
+            for (let num of arr) {
+                linkedList.insertAtHead(num);
+            }
+            updateLinkedListDisplay();
+        }
+
+        function insertAtHead() {
+            let value = parseInt(document.getElementById("insertHeadValue").value);
+            if (!isNaN(value)) {
+                linkedList.insertAtHead(value);
+                updateLinkedListDisplay();
+            }
+        }
+
+        function insertAtMiddle() {
+            let value = parseInt(document.getElementById("insertMiddleValue").value);
+            if (!isNaN(value)) {
+                linkedList.insertAtMiddle(value);
+                updateLinkedListDisplay();
+            }
+        }
+
+        function insertAtPosition() {
+            let value = parseInt(document.getElementById("insertPosValue").value);
+            let position = parseInt(document.getElementById("insertPosIndex").value);
+            if (!isNaN(value) && !isNaN(position)) {
+                linkedList.insertAtPosition(value, position);
+                updateLinkedListDisplay();
+            }
+        }
+
+        function deleteNode() {
+            let value = parseInt(document.getElementById("deleteValue").value);
+            if (!isNaN(value)) {
+                linkedList.delete(value);
+                updateLinkedListDisplay();
+            }
+        }
+
+        function traverseList() {
+            let result = linkedList.traverse();
+            document.getElementById("traversalResult").innerText = `📜 Traversed List: [ ${result.join(" → ")} ]`;
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #FFF8E7;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background-color: #FFA500;
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+        }
+        .navbar h1 {
+            color: white;
+            margin: 0;
+            font-size: 22px;
+        }
+        .navbar nav {
+            display: flex;
+            gap: 20px;
+        }
+        .navbar a {
+            text-decoration: none;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px 20px;
+            background-color: #FFA500;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        .navbar a:hover {
+            background-color: #FFD580;
+            color: white;
+        }
+        .main-content {
+            margin: 50px auto;
+        }
+        .button-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            max-width: 400px;
+            margin: 50px auto;
+        }
+        .button-container button {
+            background-color: white;
+            color: #FFA500;
+            border: 2px solid #FFA500;
+            padding: 15px;
+            cursor: pointer;
+            font-size: 18px;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        .button-container button:hover {
+            background-color: #FFD580;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar with all the navigation options -->
+    <div class="navbar">
+        <h1>DSA Visuo</h1>
+        <nav>
+            <a href="dataInput.html">Data Input</a>
+            <a href="search.html">Searching</a>
+            <a href="sorting.html">Sorting</a>
+            <a href="stack.html">Stacks</a>
+            <a href="queue.html">Queues</a>
+            <a href="linkedList.html">Linked List</a>
+            <a href="tree.html">Trees</a>
+            <a href="graph.html">Graphs</a>
+        </nav>
+    </div>
+
+    <!-- Main content area -->
+    <div class="main-content">
+        <h2>Explore various Data Structure Visualizations!</h2>
+        <p>Click the options below to get started with different algorithms and data structures.</p>
+    </div>
+
+    <div class="button-container">
+        <button onclick="navigateTo('dataInput.html')">Data Input</button>
+        <button onclick="navigateTo('search.html')">Searching</button>
+        <button onclick="navigateTo('sorting.html')">Sorting</button>
+        <button onclick="navigateTo('stack.html')">Stacks</button>
+        <button onclick="navigateTo('queue.html')">Queues</button>
+        <button onclick="navigateTo('linkedList.html')">Linked List</button>
+        <button onclick="navigateTo('tree.html')">Trees</button>
+        <button onclick="navigateTo('graph.html')">Graphs</button>
+    </div>
+
+    <script>
+        function navigateTo(page) {
+            window.location.href = page;
+        }
+    </script>
+
+</body>
+</html>
